@@ -1,0 +1,69 @@
+/* Conteneur principal */
+.profile-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f4f4f4;
+    padding: 20px;
+  }
+  
+  /* Carte de profil */
+  .profile-card {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+  }
+  
+  /* Titre */
+  .profile-card h2 {
+    font-size: 1.8em;
+    color: #333;
+    margin-bottom: 20px;
+  }
+  
+  /* Liste des informations de profil */
+  .profile-info {
+    text-align: left;
+    margin-bottom: 20px;
+  }
+  
+  /* Élément de profil individuel */
+  .profile-item {
+    font-size: 1.1em;
+    margin: 10px 0;
+    color: #555;
+  }
+  
+  .profile-item strong {
+    color: #333;
+  }
+  
+  .profile-item input {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+  
+  /* Bouton Modifier Profil */
+  .edit-btn {
+    background-color: #f39c12;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .edit-btn:hover {
+    background-color: #e67e22;
+  }
+  
