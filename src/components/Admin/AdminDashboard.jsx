@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import AfficheReservations from './AfficheReservations';
 import AfficheAbonnements from './AfficheAbonnements';
-import Settings from './Settings';  // Composant fictif pour Settings
-import Reports from './Reports';  // Composant fictif pour Reports
+import AjouterTerrain from './AjouterTerrain';
+
+  // Composant fictif pour Reports
 import './Admin.css';
 
 const AdminDashboard = () => {
@@ -57,7 +58,7 @@ const AdminDashboard = () => {
                                 onClick={() => handleTabClick('abonnements')}
                             >
                                 <i className="fas fa-dumbbell nav-img"></i>
-                                <h3>Salle de Musculation</h3>
+                                <h3>Salle de Sport</h3>
                             </div>
 
                             <div
@@ -75,14 +76,16 @@ const AdminDashboard = () => {
                                 <i className="fas fa-user nav-img"></i>
                                 <h3>Profile</h3>
                             </div>
-
                             <div
-                                className="nav-option option6"
-                                onClick={() => handleTabClick('settings')}
+                                className="nav-option option5"
+                                onClick={() => handleTabClick('AjouterTerrain')}
                             >
-                                <i className="fas fa-cog nav-img"></i>
-                                <h3>Settings</h3>
+                                <i className="fas fa-plus-circle add-icon"></i>
+                                {/* Icône Material d'ajout */}
+                                <h3>Gérer les Terrains</h3>
                             </div>
+
+                            
 
                             <div className="nav-option logout">
                                 <i className="fas fa-sign-out-alt nav-img"></i>
@@ -97,8 +100,8 @@ const AdminDashboard = () => {
                     {/* Affichage des données en fonction de l'onglet sélectionné */}
                     {activeTab === 'reservations' && <AfficheReservations />}
                     {activeTab === 'abonnements' && <AfficheAbonnements />}
-                    {activeTab === 'reports' && <Reports />}  {/* Composant fictif */}
-                    {activeTab === 'settings' && <Settings />}  {/* Composant fictif */}
+                    
+                    {activeTab === 'AjouterTerrain' && <AjouterTerrain />}
                 </div>
             </div>
         </div>

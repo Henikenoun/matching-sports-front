@@ -13,8 +13,17 @@ const ReservationUser = () => {
   const [reservationToDelete, setReservationToDelete] = useState(null);
   const [isEditMode, setIsEditMode] = useState(false); // Mode édition
   const [editedReservation, setEditedReservation] = useState(null); // Réservation à modifier
-  const clientId = 'ff032b49-f332-40bf-b7ef-f88827d66f60'; // ID du client à gérer
 
+  // Récupérer l'objet client depuis le localStorage
+  const clientData = JSON.parse(localStorage.getItem('user'));
+  const clientId = clientData ? clientData.idClient : null;
+
+  if (!clientId) {
+    toast.error('ID client introuvable, veuillez vous connecter.');
+    return; // Si l'ID client est introuvable, arrêter l'exécution
+  }
+
+  // Charger les réservations de l'utilisateur
   const fetchReservations = async () => {
     try {
       const response = await axios.get('https://localhost:7050/api/Reservation');
@@ -26,41 +35,37 @@ const ReservationUser = () => {
   };
 
   useEffect(() => {
-    fetchReservations(); // Charger les réservations au début
+    fetchReservations(); // Charger les réservations lors du montage
   }, []);
 
+  // Gérer la modification d'une réservation
   const handleModify = (id) => {
     const reservationToEdit = reservations.find(reservation => reservation.id === id);
     setEditedReservation(reservationToEdit);
     setIsEditMode(true); // Passer en mode édition
   };
 
+  // Sauvegarder la modification de la réservation
   const handleSaveModification = async (newDateDebut) => {
     if (!editedReservation) return;
 
-    // Vérifier si newDateDebut est une date valide
     const parsedDate = new Date(newDateDebut);
     if (isNaN(parsedDate)) {
       toast.error('La date de début n\'est pas valide.');
       return;
     }
 
-    // Créer l'objet à envoyer avec les bons champs
     const updatedReservation = {
         reservationId: editedReservation.id,  // Utilisation de 'reservationId' au lieu de 'id'
-        clientId: editedReservation.clientId,  // ID du client
+        clientId: clientId,  // Utilisation de l'ID client récupéré du localStorage
         terrainId: editedReservation.terrain.id,  // ID du terrain
         dateDebut: new Date(parsedDate.getTime() + 60 * 60000).toISOString(),  // dateDebut + 1 heure
         dateFin: new Date(parsedDate.getTime() + 90 * 60000 + 60 * 60000).toISOString()  // dateFin = dateDebut + 1H30 (90 minutes)
       };
-      
-      
-    console.log("Données envoyées :", updatedReservation);  // Log des données pour débogage
 
     try {
       // Envoi de la requête PUT pour modifier la réservation
       await axios.put(`https://localhost:7050/api/Reservation/${updatedReservation.reservationId}`, updatedReservation);
-
       fetchReservations(); // Recharger les réservations après la modification
       setIsEditMode(false); // Sortir du mode édition
       toast.success('Réservation modifiée avec succès');
@@ -70,11 +75,13 @@ const ReservationUser = () => {
     }
   };
 
+  // Gérer la suppression de la réservation
   const handleDeleteConfirmation = (id) => {
     setReservationToDelete(id);
     setIsModalOpen(true);
   };
 
+  // Supprimer la réservation
   const handleDelete = async () => {
     if (!reservationToDelete) {
       console.error('Aucune réservation à supprimer.');

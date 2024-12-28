@@ -1,0 +1,67 @@
+/* Styles pour le container principal */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    margin-top: 80px; /* Un peu d'espace pour que le contenu ne soit pas collé au menu */
+  }
+  
+  /* Positionnement et style du menu */
+  .Menu {
+    position: fixed; /* Garder le menu fixe en haut de la page */
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #2c3e50;
+    color: white;
+    z-index: 1000; /* Assurez-vous que le menu reste au-dessus du contenu */
+    padding: 10px 20px;
+    text-align: center;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Ajout d'une légère ombre sous le menu */
+  }
+  
+  .Menu h1 {
+    margin: 0;
+    font-size: 20px;
+    color: white;
+  }
+  
+  /* Section des abonnements */
+  .abonnement-section {
+    margin-top: 20px;
+  }
+  
+  .abonnement-card {
+    background-color: #ffffff;
+    padding: 15px;
+    margin: 15px 0;
+    border: 1px solid #ecf0f1;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .abonnement-card h3 {
+    color: #2980b9;
+    font-size: 20px;
+    margin-bottom: 15px;
+  }
+  
+  .abonnement-card p {
+    margin-bottom: 8px;
+  }
+  
+  /* Style de chargement et message d'erreur */
+  .loading, .error {
+    text-align: center;
+    font-size: 18px;
+    color: #e74c3c;
+  }
+  
+  .loading {
+    color: #f39c12;
+  }
+  
+  .error {
+    color: #e74c3c;
+  }
+  

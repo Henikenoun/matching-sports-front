@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify'; // Assurez-vous d'avoir installé react-toastify
+import { toast } from 'react-toastify'; // Assurez-vous que cette ligne est correcte
+import 'react-toastify/dist/ReactToastify.css'; // N'oubliez pas d'importer le CSS
 import './Menu.css';
 import logoImage from '../../assets/Logo.png'; // Chemin vers votre image
 
@@ -8,12 +9,13 @@ const Menu = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    // Supprimer le token du localStorage
-    localStorage.removeItem('token'); 
+    // Supprimer le token et les informations utilisateur du localStorage
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
 
     // Afficher un message de succès
     toast.success('Vous êtes déconnecté avec succès!', {
-      position: toast.POSITION.TOP_CENTER,
+      // Vérifiez que POSITION est bien défini dans `toast`
       autoClose: 3000, // Temps avant de fermer le toast
     });
 
@@ -36,15 +38,13 @@ const Menu = () => {
           <li className="menu-item" onClick={() => navigate('/ReservationUser')}>
             Mes Réservations
           </li>
-          <li className="menu-item" onClick={() => navigate('/AbonnementUser')}>
+          <li className="menu-item" onClick={() => navigate('/AfficheAbonnementUser')}>
             Mes Abonnements
           </li>
           <li className="menu-item" onClick={() => navigate('/AffichageProfil')}>
             Profil
           </li>
-          <li className="menu-item" onClick={() => navigate('/contact')}>
-            Contact
-          </li>
+          
           {/* Ajouter les liens pour l'inscription et la connexion */}
           <li className="menu-item" onClick={() => navigate('/Register')}>
             S'inscrire

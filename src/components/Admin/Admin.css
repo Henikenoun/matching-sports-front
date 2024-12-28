@@ -498,4 +498,115 @@ border-radius: 4px;
             font-size: 1.15rem;
         }
     }
+    .terrain-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+    }
     
+    .terrain-item {
+        border: 1px solid #ddd;
+        padding: 16px;
+        border-radius: 8px;
+        width: 200px;
+        text-align: center;
+    }
+    
+    .btn {
+        margin: 8px;
+        padding: 8px 12px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    
+    .btn-add {
+        background-color: #4CAF50;
+        color: white;
+    }
+    
+    .btn-edit {
+        background-color: #2196F3;
+        color: white;
+    }
+    
+    .btn-delete {
+        background-color: #f44336;
+        color: white;
+    }
+    .abonnement-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+      
+      .abonnement-table th,
+      .abonnement-table td {
+        padding: 10px;
+        text-align: center;
+        border: 1px solid #ddd;
+      }
+      
+      .abonnement-table th {
+        background-color: #f4f4f4;
+      }
+      
+      .pagination-container {
+        margin-top: 20px;
+        display: flex;
+        justify-content: center;
+      }
+      
+      .page-btn {
+        padding: 5px 10px;
+        margin: 0 5px;
+        cursor: pointer;
+      }
+      
+      .page-btn.active {
+        font-weight: bold;
+      }
+      
+      .pagination-btn {
+        padding: 5px 15px;
+        margin: 0 10px;
+        cursor: pointer;
+      }
+      /* Style pour le tableau des réservations */
+.reservation-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.reservation-table th, .reservation-table td {
+    padding: 10px;
+    text-align: center;
+    border: 1px solid #ddd;
+}
+
+.reservation-table th {
+    background-color: #f4f4f4;
+}
+
+/* Style pour la pagination */
+.pagination-container {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.page-btn {
+    padding: 5px 10px;
+    margin: 0 5px;
+    cursor: pointer;
+}
+
+.page-btn.active {
+    font-weight: bold;
+}
+
+.filter-select {
+    padding: 5px 10px;
+    margin-top: 10px;
+}

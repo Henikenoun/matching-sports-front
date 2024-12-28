@@ -100,27 +100,28 @@ const AfficheReservations = () => {
             </div>
 
             <div className="report-body">
-                <div className="report-topic-heading">
-                    <h3 className="t-op">Client</h3>
-                    <h3 className="t-op">Terrain</h3>
-                    <h3 className="t-op">Date Réservation</h3>
-                    <h3 className="t-op">Date Début</h3>
-                    <h3 className="t-op">Date Fin</h3>
-                </div>
-
-                <div className="items">
-                    {currentReservations.map((reservation, idx) => (
-                        <div key={idx} className="item1">
-                            <h3 className="t-op-nextlvl">
-                                {reservation.client ? `${reservation.client.nom} ${reservation.client.prenom}` : 'Client inconnu'}
-                            </h3>
-                            <h3 className="t-op-nextlvl">{getTerrainName(reservation.terrainId)}</h3>
-                            <h3 className="t-op-nextlvl">{formatDate(reservation.dateReservation)}</h3>
-                            <h3 className="t-op-nextlvl">{formatDate(reservation.dateDebut)}</h3>
-                            <h3 className="t-op-nextlvl">{formatDate(reservation.dateFin)}</h3>
-                        </div>
-                    ))}
-                </div>
+                <table className="reservation-table">
+                    <thead>
+                        <tr>
+                            <th>Client</th>
+                            <th>Terrain</th>
+                            <th>Date Réservation</th>
+                            <th>Date Début</th>
+                            <th>Date Fin</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {currentReservations.map((reservation, idx) => (
+                            <tr key={idx}>
+                                <td>{reservation.client ? `${reservation.client.nom} ${reservation.client.prenom}` : 'Client inconnu'}</td>
+                                <td>{getTerrainName(reservation.terrainId)}</td>
+                                <td>{formatDate(reservation.dateReservation)}</td>
+                                <td>{formatDate(reservation.dateDebut)}</td>
+                                <td>{formatDate(reservation.dateFin)}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
 
                 {/* Pagination */}
                 <div className="pagination-container">

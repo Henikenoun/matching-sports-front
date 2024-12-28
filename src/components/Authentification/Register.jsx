@@ -49,7 +49,7 @@ const Register = () => {
         setSuccessMessage('Inscription réussie !');
         console.log(response.data);
         // Redirection vers la page d'accueil après une inscription réussie
-        navigate('/');
+        navigate('/login');
       }
     } catch (error) {
       // Si une erreur se produit lors de l'appel API

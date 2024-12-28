@@ -1,72 +1,72 @@
 /* Conteneur principal de l'en-tête */
 .menu-header {
-    background-color: rgba(0, 0, 0, 0.8); /* Fond semi-transparent */
-    padding: 10px 20px;
-    display: flex;
-    justify-content: space-between; /* Espace entre le logo et les liens */
-    align-items: center;
-    position: fixed; /* Fixe le menu en haut */
-    width: 100%;
-    top: 0;
-    z-index: 10;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Ombre subtile */
-  }
-  
-  /* Logo */
-  .logo {
-    cursor: pointer;
-  }
-  
-  .logo img {
-    width: 160px; /* Ajustez la taille selon vos besoins */
-    height: auto;
-    margin-left: 20px;
-  }
-  
-  /* Conteneur des liens */
-  .menu-links {
-    display: flex; /* Aligne les éléments horizontalement */
-    list-style: none; /* Supprime les puces des éléments */
-    margin: 0;
-    padding: 0;
-    gap: 20px; /* Espacement entre les liens */
-  }
-  
-  /* Liens individuels */
-  .menu-item {
-    color: #fff; /* Couleur blanche par défaut */
-    font-size: 1.1em;
-    font-weight: 500;
-    cursor: pointer;
-    text-decoration: none; /* Supprime le soulignement */
-    transition: color 0.3s ease, transform 0.3s ease; /* Animation douce */
-  }
-  
-  /* Effet au survol */
-  .menu-item:hover {
-    color: #f39c12; /* Couleur au survol */
-    transform: translateY(-3px); /* Déplace légèrement vers le haut */
-  }
-  
-  /* Responsive - centrer les liens sur petits écrans */
-  @media (max-width: 768px) {
-    .menu-header {
-      flex-direction: column; /* Empile le logo et les liens verticalement */
-      align-items: center;
-      padding: 15px;
-    }
-  
-    .menu-links {
-      flex-direction: column; /* Liens en colonne */
-      gap: 15px; /* Espacement entre les liens */
-    }
-  
-    .menu-item {
-      font-size: 1.2em; /* Augmente légèrement la taille pour mobile */
-    }
+  background-color: #2980b9; /* Fond plein sans transparence */
+  padding: 10px 20px;
+  display: flex;
+  justify-content: space-between; /* Espace entre le logo et les liens */
+  align-items: center;
+  position: fixed; /* Fixe le menu en haut */
+  width: 100%;
+  top: 0;
+  z-index: 10;
+  box-shadow: 0 5px 5px rgba(205, 149, 29, 0.2); /* Ombre subtile */
+}
 
+/* Logo */
+.logo {
+  cursor: pointer;
+}
+
+.logo img {
+  width: 160px; /* Ajustez la taille selon vos besoins */
+  height: auto;
+  margin-left: 20px;
+}
+
+/* Conteneur des liens */
+.menu-links {
+  display: flex; /* Aligne les éléments horizontalement */
+  list-style: none; /* Supprime les puces des éléments */
+  margin: 0;
+  padding: 0;
+  gap: 20px; /* Espacement entre les liens */
+}
+
+/* Liens individuels */
+.menu-item {
+  color: #fff; /* Couleur blanche par défaut */
+  font-size: 1.1em;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none; /* Supprime le soulignement */
+  transition: color 0.3s ease, transform 0.3s ease; /* Animation douce */
+}
+
+/* Effet au survol */
+.menu-item:hover {
+  color: #f39c12; /* Couleur au survol */
+  transform: translateY(-3px); /* Déplace légèrement vers le haut */
+}
+
+/* Responsive - centrer les liens sur petits écrans */
+@media (max-width: 768px) {
+  .menu-header {
+    flex-direction: column; /* Empile le logo et les liens verticalement */
+    align-items: center;
+    padding: 15px;
   }
-  /* Conteneur du menu déroulant */
+
+  .menu-links {
+    flex-direction: column; /* Liens en colonne */
+    gap: 15px; /* Espacement entre les liens */
+  }
+
+  .menu-item {
+    font-size: 1.2em; /* Augmente légèrement la taille pour mobile */
+  }
+}
+
+/* Conteneur du menu déroulant */
 .profile-dropdown {
   position: absolute;
   top: 40px; /* Positionnement sous le profil */

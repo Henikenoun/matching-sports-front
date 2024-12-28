@@ -41,6 +41,15 @@ const FormulaireAbonnement = ({ show, handleClose }) => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
+    // Récupérer le clientId depuis le localStorage
+    const user = JSON.parse(localStorage.getItem("user"));
+    const clientId = user?.idClient;
+
+    if (!clientId) {
+      toast.error("ID client non trouvé. Veuillez vous connecter.");
+      return;
+    }
+
     if (!selectedTypeGym || !selectedFrequence || !dateDebut) {
       toast.error("Veuillez remplir tous les champs correctement !");
       return;
@@ -51,12 +60,12 @@ const FormulaireAbonnement = ({ show, handleClose }) => {
     dateFin.setFullYear(dateDebutFormatted.getFullYear() + 1); // Exemple : abonnement d'un an
 
     const abonnementData = {
-      clientId: "05fe24f6-36f1-4f0f-a429-ac759db9bf7b", // ID client fixe pour l'exemple
+      clientId: clientId, // Utilisation du clientId récupéré depuis localStorage
       typeGym: selectedTypeGym,
       frequencePaiement: selectedFrequence,
       dateDebut: dateDebutFormatted.toISOString(),
       dateFin: dateFin.toISOString(),
-      prix:"200",
+      prix: "200",
     };
 
     try {

@@ -43,7 +43,7 @@ const FormulaireTerrain = ({ show, handleClose, selectedSport }) => {
       if (terrain && date) {
         try {
           const response = await axios.get(
-            `https://localhost:7050/api/Reservation/AvailableTimes`,
+            "https://localhost:7050/api/Reservation/AvailableTimes",
             {
               params: {
                 terrainId: terrain,
@@ -65,66 +65,91 @@ const FormulaireTerrain = ({ show, handleClose, selectedSport }) => {
   // Soumettre la réservation
   const handleSubmit = async (event) => {
     event.preventDefault();
-
+  
+    // Vérification de la présence du token dans localStorage
+    const token = localStorage.getItem("token");
+  
+    if (!token) {
+      toast.error("Veuillez vous authentifier avant de réserver !");
+      return;
+    }
+  
     if (!terrain || !date || !time) {
       toast.error("Veuillez remplir tous les champs !");
       return;
     }
-
+  
     // Vérification si la date sélectionnée est antérieure à aujourd'hui
     const today = new Date();
     const selectedDate = new Date(date);
-
+  
     today.setHours(0, 0, 0, 0); // Supprimer l'heure pour comparaison
     selectedDate.setHours(0, 0, 0, 0);
-
+  
     if (selectedDate < today) {
       toast.error("Vous ne pouvez pas réserver une date passée !");
       return;
     }
-
-    const dateString = `${date}T${time}:00`;
+  
+    const dateString = `${date}T${time}:00`; // Correction de la construction de la date
     const dateReservation = new Date(dateString);
     const dateDebut = new Date(dateReservation);
     dateDebut.setMinutes(0);
     dateDebut.setSeconds(0);
-
+  
     const dateFin = new Date(dateDebut);
     dateFin.setHours(dateDebut.getHours() + 1);
     dateFin.setMinutes(dateDebut.getMinutes() + 30); // Ajouter 1h30
-
+  
     try {
       // Vérifier si le créneau est déjà réservé
       const conflictCheckResponse = await axios.get(
-        `https://localhost:7050/api/Reservation/CheckConflict`,
+        "https://localhost:7050/api/Reservation/CheckConflict", // Correction de l'URL
         {
           params: {
             terrainId: terrain,
             dateDebut: dateDebut.toISOString(),
             dateFin: dateFin.toISOString(),
           },
+          headers: {
+            Authorization: `Bearer ${token}` // Ajouter le token dans l'en-tête de la requête
+          }
         }
       );
-
+  
       if (conflictCheckResponse.data.conflict) {
         toast.error("Ce créneau est déjà réservé pour le terrain sélectionné.");
         return;
       }
-
+  
+      // Récupérer l'ID client depuis le localStorage
+      const user = JSON.parse(localStorage.getItem("user"));
+      const clientId = user?.idClient;
+  
+      if (!clientId) {
+        toast.error("Non connecté. Veuillez vous reconnecter.");
+        return;
+      }
+  
       // Si pas de conflit, soumettre la réservation
       const reservationData = {
-        clientId: "ff032b49-f332-40bf-b7ef-f88827d66f60", // ID client fixe pour l'exemple
+        clientId: clientId, // Utilisation de l'ID client depuis le localStorage
         terrainId: terrain, // ID du terrain sélectionné
         dateReservation: dateReservation.toISOString(),
         dateDebut: dateDebut.toISOString(),
         dateFin: dateFin.toISOString(),
       };
-
+  
       const response = await axios.post(
         "https://localhost:7050/api/Reservation",
-        reservationData
+        reservationData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}` // Ajouter le token dans l'en-tête de la requête
+          }
+        }
       );
-
+  
       if (response.status === 201) {
         toast.success("Réservation effectuée avec succès !");
         handleClose();
@@ -139,7 +164,7 @@ const FormulaireTerrain = ({ show, handleClose, selectedSport }) => {
       );
     }
   };
-
+  
   return (
     <Modal show={show} onHide={handleClose} centered>
       <Modal.Header closeButton>
