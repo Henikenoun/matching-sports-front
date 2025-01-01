@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
-import './Login.css';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import axios from 'axios'; // Importation d'axios
+import { useNavigate } from 'react-router-dom'; // Importation de useNavigate
+import './Login.css'; // Assurez-vous de créer ce fichier CSS pour le style
 import Menu from '../Menu/Menu';
 
 const Login = () => {
@@ -14,8 +12,7 @@ const Login = () => {
 
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-
-  const navigate = useNavigate();
+  const navigate = useNavigate(); // Hook de navigation
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -25,45 +22,34 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    setError(''); // Réinitialiser l'erreur avant une nouvelle tentative
-
-    if (!formData.email || !formData.password) {
-      setError('Tous les champs doivent être remplis');
-      setIsLoading(false);
-      return;
-    }
+    setError('');
 
     try {
-      // Envoi des données à l'API pour se connecter
-      const response = await axios.post('https://localhost:7050/api/Account/login', {
-        email: formData.email,
-        motDePasse: formData.password,
+      const response = await axios.post('http://localhost:8000/api/users/login', formData, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
       });
 
-      if (response.status === 200) {
-        const { token, idClient, nom, prenom, email, role, nbReservations, typesGym } = response.data;
+      if (response.data.success) {
+        // Stock the token and user details in local storage
+        localStorage.setItem('token', response.data.token);
+        localStorage.setItem('user', JSON.stringify(response.data.user));
 
-        // Stockage des données dans localStorage
-        localStorage.setItem('token', token);
-        localStorage.setItem('user', JSON.stringify({ idClient, nom, prenom, email, role, nbReservations, typesGym }));
+        setIsLoading(false);
 
-        // Affichage du toast de succès
-        toast.success('Connexion réussie !', {
-          position: 'top-center',
-          autoClose: 3000,
-          hideProgressBar: true,
-        });
-
-        // Redirection en fonction du rôle de l'utilisateur
-        if (role === 'admin') {
-          setTimeout(() => {
-            navigate('/admin'); // Rediriger vers la page admin si le rôle est admin
-          }, 300);
+        // Redirection based on user role
+        const userRole = response.data.user.role;
+        if (userRole === 'admin') {
+          navigate('/admin');
+        } else if (userRole === 'owner') {
+          navigate('/owner');
         } else {
-          setTimeout(() => {
-            navigate('/'); // Rediriger vers la page d'accueil sinon
-          }, 300);
+          navigate('/');
         }
+      } else {
+        setError('Identifiants incorrects. Veuillez réessayer.');
+        setIsLoading(false);
       }
     } catch (error) {
       console.error('Erreur lors de la connexion :', error);
@@ -107,14 +93,8 @@ const Login = () => {
             </div>
 
             <button type="submit" className="login-btn" disabled={isLoading}>
-              {isLoading ? 'Connexion...' : 'Se connecter'}
+              {isLoading ? 'Connexion en cours...' : 'Se connecter'}
             </button>
-
-            <div className="signup-redirect">
-              <p>
-                Pas encore de compte ? <a href="/register">S'inscrire</a>
-              </p>
-            </div>
           </form>
         </div>
       </div>

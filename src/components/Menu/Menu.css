@@ -11,7 +11,16 @@
   z-index: 10;
   box-shadow: 0 5px 5px rgba(205, 149, 29, 0.2); /* Ombre subtile */
 }
-
+.cart-count {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  background-color: red;
+  color: white;
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 12px;
+}
 /* Logo */
 .logo {
   cursor: pointer;
@@ -40,6 +49,7 @@
   cursor: pointer;
   text-decoration: none; /* Supprime le soulignement */
   transition: color 0.3s ease, transform 0.3s ease; /* Animation douce */
+  position: relative; /* Nécessaire pour positionner correctement le menu déroulant */
 }
 
 /* Effet au survol */
@@ -92,9 +102,4 @@
 /* Changement de couleur au survol */
 .profile-dropdown li:hover {
   background-color: #f39c12;
-}
-
-/* Conteneur de la section Profile dans le menu principal */
-.menu-item {
-  position: relative; /* Nécessaire pour positionner correctement le menu déroulant */
 }

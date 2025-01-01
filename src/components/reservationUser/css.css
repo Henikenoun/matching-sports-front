@@ -1,0 +1,53 @@
+/* Add styles for the reservation container */
+.reservation-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* Three columns */
+  gap: 20px;
+  padding: 20px;
+}
+
+/* Add styles for the reservation cards */
+.reservation-card {
+  width: 100%; /* Make the card take full width of the grid cell */
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+}
+
+/* Add styles for the participant cards */
+.participant-card {
+  margin-top: 10px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: #f9f9f9;
+}
+
+/* Add styles for the form */
+form {
+  margin-top: 20px;
+}
+
+form input,
+form button {
+  display: block;
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+form button {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+
+form button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}

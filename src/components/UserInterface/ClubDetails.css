@@ -1,0 +1,123 @@
+.club-details-portfolio {
+    padding: 20px;
+    background-color: #f5f5f5;
+    padding-top: 80px; /* Adjust this value based on the height of your navbar */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.club-header {
+    background-color: #2980b9;
+    color: white;
+    padding: 20px;
+    text-align: center;
+    border-radius: 8px;
+    margin-bottom: 40px; /* Adjust this value to add space between header and info */
+    width: fit-content;
+}
+
+.club-header-content h1 {
+    margin: 0;
+    font-size: 2.5em;
+}
+
+.club-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 60%;
+    padding-top: 20px;
+    height: fit-content;
+    flex-direction: column;
+    align-items: center;
+}
+
+.left-column, .right-column {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.left-column p, .right-column p {
+    margin: 10px 0;
+    font-size: 1.1em;
+}
+
+.terrains-section {
+    margin-top: 20px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.terrains-section h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 2em;
+    color: #2980b9;
+}
+
+.terrains-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    width: 80%;
+}
+
+.terrain-card {
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    width: calc(33.333% - 20px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.terrain-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.terrain-image {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+}
+
+.terrain-details {
+    padding: 10px;
+    text-align: center;
+}
+
+.terrain-details h3 {
+    margin: 10px 0;
+    font-size: 1.5em;
+    color: #2980b9;
+}
+
+.terrain-details p {
+    margin: 5px 0;
+    font-size: 1.1em;
+}
+.filter-container {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.filter-container label {
+    margin-right: 10px;
+    font-size: 1.1em;
+}
+
+.filter-container select {
+    padding: 5px;
+    font-size: 1.1em;
+}

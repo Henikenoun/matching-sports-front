@@ -1,163 +1,135 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import './ReservationUser.css';
-import Menu from './Menu/Menu';
-import { ToastContainer, toast } from 'react-toastify'; // Pour les toasts
-import 'react-toastify/dist/ReactToastify.css'; // Style des toasts
-import ModifyReservationModal from './ModifyReservationModal'; // Import du modal de modification
-import ConfirmationModal from './ConfirmationModal'; // Import du modal de confirmation
+import './Admin/Pag.css';
 
 const ReservationUser = () => {
-  const [reservations, setReservations] = useState([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [reservationToDelete, setReservationToDelete] = useState(null);
-  const [isEditMode, setIsEditMode] = useState(false); // Mode édition
-  const [editedReservation, setEditedReservation] = useState(null); // Réservation à modifier
+    const [reservations, setReservations] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage] = useState(6);
+    const [loading, setLoading] = useState(true);
+    const [selectedReservation, setSelectedReservation] = useState(null);
+    const userId = localStorage.getItem('userId'); // Assuming user ID is stored in localStorage
 
-  // Récupérer l'objet client depuis le localStorage
-  const clientData = JSON.parse(localStorage.getItem('user'));
-  const clientId = clientData ? clientData.idClient : null;
+    const fetchReservations = async () => {
+        try {
+            const response = await axios.get('http://127.0.0.1:8000/api/reservation');
+            const userReservations = response.data.filter(reservation => reservation.User_Reserve === userId);
+            setReservations(userReservations);
+        } catch (error) {
+            console.error('Erreur lors de la récupération des réservations', error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
-  if (!clientId) {
-    toast.error('ID client introuvable, veuillez vous connecter.');
-    return; // Si l'ID client est introuvable, arrêter l'exécution
-  }
+    useEffect(() => {
+        fetchReservations();
+    }, []);
 
-  // Charger les réservations de l'utilisateur
-  const fetchReservations = async () => {
-    try {
-      const response = await axios.get('https://localhost:7050/api/Reservation');
-      const userReservations = response.data.filter(reservation => reservation.clientId === clientId);
-      setReservations(userReservations);
-    } catch (error) {
-      console.error('Erreur lors de la récupération des réservations', error);
-    }
-  };
+    const formatDate = (date) => {
+        const d = new Date(date);
+        const day = String(d.getDate()).padStart(2, '0');
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const year = d.getFullYear();
+        const hours = String(d.getHours()).padStart(2, '0');
+        const minutes = String(d.getMinutes()).padStart(2, '0');
+        return `${day}/${month}/${year} ${hours}:${minutes}`;
+    };
 
-  useEffect(() => {
-    fetchReservations(); // Charger les réservations lors du montage
-  }, []);
+    const handleDetailsClick = (reservationId) => {
+        const reservation = reservations.find(r => r.id === reservationId);
+        setSelectedReservation(reservation);
+    };
 
-  // Gérer la modification d'une réservation
-  const handleModify = (id) => {
-    const reservationToEdit = reservations.find(reservation => reservation.id === id);
-    setEditedReservation(reservationToEdit);
-    setIsEditMode(true); // Passer en mode édition
-  };
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentReservations = reservations.slice(indexOfFirstItem, indexOfLastItem);
 
-  // Sauvegarder la modification de la réservation
-  const handleSaveModification = async (newDateDebut) => {
-    if (!editedReservation) return;
+    const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-    const parsedDate = new Date(newDateDebut);
-    if (isNaN(parsedDate)) {
-      toast.error('La date de début n\'est pas valide.');
-      return;
-    }
-
-    const updatedReservation = {
-        reservationId: editedReservation.id,  // Utilisation de 'reservationId' au lieu de 'id'
-        clientId: clientId,  // Utilisation de l'ID client récupéré du localStorage
-        terrainId: editedReservation.terrain.id,  // ID du terrain
-        dateDebut: new Date(parsedDate.getTime() + 60 * 60000).toISOString(),  // dateDebut + 1 heure
-        dateFin: new Date(parsedDate.getTime() + 90 * 60000 + 60 * 60000).toISOString()  // dateFin = dateDebut + 1H30 (90 minutes)
-      };
-
-    try {
-      // Envoi de la requête PUT pour modifier la réservation
-      await axios.put(`https://localhost:7050/api/Reservation/${updatedReservation.reservationId}`, updatedReservation);
-      fetchReservations(); // Recharger les réservations après la modification
-      setIsEditMode(false); // Sortir du mode édition
-      toast.success('Réservation modifiée avec succès');
-    } catch (error) {
-      console.error('Erreur lors de la modification de la réservation', error.response || error.message);
-      toast.error('Une erreur est survenue lors de la modification.');
-    }
-  };
-
-  // Gérer la suppression de la réservation
-  const handleDeleteConfirmation = (id) => {
-    setReservationToDelete(id);
-    setIsModalOpen(true);
-  };
-
-  // Supprimer la réservation
-  const handleDelete = async () => {
-    if (!reservationToDelete) {
-      console.error('Aucune réservation à supprimer.');
-      return;
+    const pageNumbers = [];
+    for (let i = 1; i <= Math.ceil(reservations.length / itemsPerPage); i++) {
+        pageNumbers.push(i);
     }
 
-    try {
-      await axios.delete(`https://localhost:7050/api/Reservation/${reservationToDelete}`);
-      fetchReservations(); // Recharger les réservations après suppression
-      toast.success('Réservation supprimée avec succès');
-      setIsModalOpen(false); // Fermer le modal
-    } catch (error) {
-      console.error('Erreur lors de la suppression de la réservation:', error.response || error.message);
-      toast.error('Une erreur est survenue lors de la suppression.');
+    if (loading) {
+        return (
+            <div className="loading-container">
+                <div className="loading-circle"></div>
+                <p>Chargement en cours...</p>
+            </div>
+        );
     }
-  };
 
-  const handleCloseModal = () => {
-    setIsModalOpen(false); // Fermer le modal sans supprimer
-  };
+    if (selectedReservation) {
+        return (
+            <div className="report-container p-5">
+                <h1>Détails de la Réservation</h1>
+                <p>Nom du Terrain: {selectedReservation.terrain.nom}</p>
+                <p>Date de reservation: {formatDate(selectedReservation.Date_Reservation)}</p>
+                <p>reservation sera le : {formatDate(selectedReservation.Date_TempsReel)}</p>
+                <p>Nombre de Places: {selectedReservation.Nb_Place}</p>
+                <p>Type: {selectedReservation.Type}</p>
+                <p>Complet: {selectedReservation.Complet ? <span className='text-success'>Oui</span> : <span className='text-danger'>Non</span>}</p>
+                <p>Places Disponibles: {selectedReservation.terrain.capacite - selectedReservation.Nb_Place}</p>
+                <p>Frais de Location: {selectedReservation.terrain.fraisLocation}</p>
+                <p>Payé: {selectedReservation.ispaye ? <span className='text-success'>Oui</span> : <span className='text-danger'>Non</span>}</p>
+                <p><strong>Participants:</strong> {JSON.parse(selectedReservation.Participants).join(', ')}</p>
+                <button onClick={() => setSelectedReservation(null)}>Retour</button>
+            </div>
+        );
+    }
 
-  return (
-    <div className="reservation-page">
-      <Menu />
-      <div className="reservation-container">
-        <h1>Mes Réservations</h1>
-        <div className="reservations-list">
-          {reservations.length === 0 ? (
-            <p className="no-reservation">Aucune réservation trouvée</p>
-          ) : (
-            reservations.map((reservation) => (
-              <div key={reservation.id} className="reservation-item">
-                <div className="reservation-details">
-                  <p><strong>Terrain:</strong> {reservation.terrain.nom}</p>
-                  <p><strong>Date Début:</strong> {new Date(reservation.dateDebut).toLocaleString()}</p>
-                  <p><strong>Date Fin:</strong> {new Date(reservation.dateFin).toLocaleString()}</p>
+    return (
+        <div className="report-container">
+            <div className="report-header">
+                <h1 className="recent-Articles">Mes Réservations</h1>
+            </div>
+
+            <div className="report-body">
+                <table className="reservation-table">
+                    <thead>
+                        <tr>
+                            <th>Terrain</th>
+                            <th>Date Réservation</th>
+                            <th>Type</th>
+                            <th>Complet</th>
+                            <th>Places Disponibles</th>
+                            <th>Frais de Location</th>
+                            <th>Détails</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {currentReservations.map((reservation, idx) => (
+                            <tr key={idx}>
+                                <td>{reservation.terrain.nom}</td>
+                                <td>{formatDate(reservation.Date_Reservation)}</td>
+                                <td>{reservation.Type}</td>
+                                <td>{reservation.Complet ? 'Oui' : 'Non'}</td>
+                                <td>{reservation.terrain.capacite - reservation.Nb_Place}</td>
+                                <td>{reservation.ispaye ? 'Payé' : 'Non payé'}</td>
+                                <td>
+                                    <button onClick={() => handleDetailsClick(reservation.id)}>Détails</button>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+
+                <div className="pagination-container">
+                    {pageNumbers.map((number) => (
+                        <button
+                            key={number}
+                            onClick={() => paginate(number)}
+                            className={`page-btn ${currentPage === number ? 'active' : ''}`}
+                        >
+                            {number}
+                        </button>
+                    ))}
                 </div>
-                <div className="reservation-actions">
-                  <button
-                    className="modify-btn"
-                    onClick={() => handleModify(reservation.id)}
-                  >
-                    Modifier
-                  </button>
-                  <button
-                    className="delete-btn"
-                    onClick={() => handleDeleteConfirmation(reservation.id)}
-                  >
-                    Supprimer
-                  </button>
-                </div>
-              </div>
-            ))
-          )}
+            </div>
         </div>
-
-        {/* Affichage du Modal pour la modification */}
-        <ModifyReservationModal 
-          isOpen={isEditMode} 
-          onClose={() => setIsEditMode(false)} 
-          reservation={editedReservation} 
-          onSave={handleSaveModification} 
-        />
-
-        {/* Affichage du Modal pour la confirmation */}
-        <ConfirmationModal 
-          isOpen={isModalOpen} 
-          onClose={handleCloseModal} 
-          onConfirm={handleDelete} 
-        />
-
-        {/* Le ToastContainer pour afficher les notifications */}
-        <ToastContainer />
-      </div>
-    </div>
-  );
+    );
 };
 
 export default ReservationUser;

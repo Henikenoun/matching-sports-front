@@ -17,7 +17,7 @@ const AjouterTerrain = () => {
 
     const fetchTerrains = async () => {
         try {
-            const response = await axios.get('https://localhost:7050/api/Terrain');
+            const response = await axios.get('http://127.0.0.1:8000/api/terrains');
             setTerrains(response.data);
         } catch (error) {
             setError('Impossible de récupérer les terrains.');
@@ -26,7 +26,7 @@ const AjouterTerrain = () => {
 
     const handleAddTerrain = async () => {
         try {
-            await axios.post('https://localhost:7050/api/Terrain', newTerrain);
+            await axios.post('http://127.0.0.1:8000/api/terrains', newTerrain);
             fetchTerrains();
             setNewTerrain({ nom: '', type: '', prix: 0 });
             setIsAdding(false);

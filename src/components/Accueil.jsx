@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import FormulaireTerrain from './FormulaireTerrain';
 import FormulaireAbonnement from './FormulaireAbonnement';
 import Menu from './Menu/Menu';
@@ -9,10 +10,18 @@ import footballImg from '../assets/football.jpg';
 import tennisImg from '../assets/tennis.jpg';
 import gymImg from '../assets/gym1.jpg';
 
+const sportsList = [
+  { name: 'Football', image: footballImg },
+  { name: 'Tennis', image: tennisImg },
+  { name: 'Musculation', image: gymImg },
+  // Add more sports as needed
+];
+
 const Accueil = () => {
   const [showTerrain, setShowTerrain] = useState(false);
   const [showAbonnement, setShowAbonnement] = useState(false);
   const [selectedSport, setSelectedSport] = useState("");
+  const navigate = useNavigate();
 
   const servicesRef = useRef(null); // Créez une référence pour la section des services
 
@@ -30,6 +39,10 @@ const Accueil = () => {
 
   const handleScrollToServices = () => {
     servicesRef.current.scrollIntoView({ behavior: 'smooth' }); // Fait défiler jusqu'à la section
+  };
+
+  const handleSportSelect = (sport) => {
+    navigate(`/clubs-by-sport?sport=${sport}`);
   };
 
   return (
@@ -56,7 +69,7 @@ const Accueil = () => {
             Découvrez nos terrains de football et de tennis, notre salle de musculation moderne,
             et un espace dédié aux enfants. Sportissimo est le lieu idéal pour tous.
           </p>
-          <button className="cta-btn" onClick={handleScrollToServices}>
+          <button className="cta-btn" >
             Réservez Maintenant
           </button>
         </div>
@@ -66,42 +79,19 @@ const Accueil = () => {
       <section className="services" ref={servicesRef}>
         <h2 className="section-title">Découvrez Nos Activités</h2>
         <div className="service-cards">
-          <div className="card" onClick={() => handleShow('Football')}>
-            <img src={footballImg} alt="Football" className="card-img" />
-            <div className="card-body">
-              <h3>Football</h3>
-              <p>Réservez nos terrains pour des matchs entre amis ou des tournois.</p>
+          {sportsList.map(sport => (
+            <div className="card" key={sport.name} onClick={() => handleSportSelect(sport.name)}>
+              <img src={sport.image} alt={sport.name} className="card-img" />
+              <div className="card-body">
+                <h3>{sport.name}</h3>
+              </div>
             </div>
-          </div>
-          <div className="card" onClick={() => handleShow('Tennis')}>
-            <img src={tennisImg} alt="Tennis" className="card-img" />
-            <div className="card-body">
-              <h3>Tennis</h3>
-              <p>Jouez sur des courts modernes avec tout l'équipement nécessaire.</p>
-            </div>
-          </div>
-          <div className="card" onClick={() => handleShow('Musculation')}>
-            <img src={gymImg} alt="Musculation" className="card-img" />
-            <div className="card-body">
-              <h3>Salle de Sport</h3>
-              <p>
-                Accédez à nos équipements dernier cri en souscrivant un abonnement.
-              </p>
-            </div>
-          </div>
+          ))}
         </div>
       </section>
 
       {/* Modals */}
-      <FormulaireTerrain
-        show={showTerrain}
-        handleClose={handleCloseTerrain}
-        selectedSport={selectedSport}
-      />
-      <FormulaireAbonnement
-        show={showAbonnement}
-        handleClose={handleCloseAbonnement}
-      />
+    
 
       {/* Footer */}
       <footer className="footer">

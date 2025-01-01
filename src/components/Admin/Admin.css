@@ -166,7 +166,7 @@ padding: 30px 0 20px 10px;
 } 
 .navcontainer { 
 height: calc(100vh - 70px); 
-width: 250px; 
+width: 300px; 
 position: relative; 
 overflow-y: scroll; 
 overflow-x: hidden; 

@@ -1,0 +1,136 @@
+.card-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.card {
+    width: 100%;
+    max-width: 600px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: scale(1.05);
+}
+
+.card-header {
+    width: 100%;
+    height: 300px;
+    overflow: hidden;
+}
+
+.card-img-top {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.card-body {
+    padding: 15px;
+}
+
+.card-title {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+}
+
+.card-text {
+    font-size: 1rem;
+    margin-bottom: 15px;
+}
+
+.details-button, .manage-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 10px;
+    margin-top: 10px;
+}
+
+.details-button:hover, .manage-button:hover {
+    background-color: #0056b3;
+}
+.card-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+}
+
+.card {
+    width: 100%;
+    max-width: 1200px; /* Largeur maximale pour ressembler à un tableau */
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: scale(1.01);
+}
+
+.card-header {
+    width: 100%;
+    height: 190px; /* Hauteur pour le slider */
+    overflow: hidden;
+}
+
+.card-img-top {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.slick-next{
+    right:-15px;
+
+}
+.slick-prev{
+    left:-18px;
+
+}
+.slick-prev:before,
+.slick-next:before {
+    color: black;
+
+}
+
+.card-body {
+    padding: 15px;
+}
+
+.card-title {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+}
+
+.card-text {
+    font-size: 1rem;
+    margin-bottom: 15px;
+}
+
+.details-button, .manage-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 10px;
+    margin-top: 10px;
+}
+
+.details-button:hover, .manage-button:hover {
+    background-color: #0056b3;
+}
