@@ -8,12 +8,16 @@ const ReservationUser = () => {
     const [itemsPerPage] = useState(6);
     const [loading, setLoading] = useState(true);
     const [selectedReservation, setSelectedReservation] = useState(null);
-    const userId = localStorage.getItem('userId'); // Assuming user ID is stored in localStorage
+    const userId = JSON.parse(localStorage.getItem('user')).id; // Assuming user ID is stored in localStorage
 
     const fetchReservations = async () => {
         try {
             const response = await axios.get('http://127.0.0.1:8000/api/reservation');
-            const userReservations = response.data.filter(reservation => reservation.User_Reserve === userId);
+            const userReservations = response.data.filter(reservation => 
+                reservation.User_Reserve === userId || 
+                JSON.parse(reservation.Participants).some(participant => participant.user === userId)
+            );
+            console.log('userId:',  response.data);
             setReservations(userReservations);
         } catch (error) {
             console.error('Erreur lors de la récupération des réservations', error);
@@ -74,7 +78,7 @@ const ReservationUser = () => {
                 <p>Places Disponibles: {selectedReservation.terrain.capacite - selectedReservation.Nb_Place}</p>
                 <p>Frais de Location: {selectedReservation.terrain.fraisLocation}</p>
                 <p>Payé: {selectedReservation.ispaye ? <span className='text-success'>Oui</span> : <span className='text-danger'>Non</span>}</p>
-                <p><strong>Participants:</strong> {JSON.parse(selectedReservation.Participants).join(', ')}</p>
+                <p><strong>Participants:</strong> {JSON.parse(selectedReservation.Participants).map(participant => participant.user).join(', ')}</p>
                 <button onClick={() => setSelectedReservation(null)}>Retour</button>
             </div>
         );

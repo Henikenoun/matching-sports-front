@@ -39,8 +39,9 @@ const Shop = () => {
                 ...shop,
                 photos: typeof shop.photos === 'string' ? JSON.parse(shop.photos) : shop.photos,
             }));
-            // data.filter(shop => shop.club_id === (localStorage.getItem('user')).club_id);
-            setShops(data);
+            const user = JSON.parse(localStorage.getItem('user'));
+            const filteredShops = data.filter(shop => shop.club_id === user.club_id);
+            setShops(filteredShops);
         } catch (error) {
             console.error('Erreur lors de la récupération des shops', error);
         } finally {

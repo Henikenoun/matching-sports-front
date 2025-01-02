@@ -61,8 +61,10 @@ const Menu = () => {
           <li className="menu-item" onClick={() => navigate('/ReservationUser')}>
             Mes Réservations
           </li>
-          <li className="menu-item" onClick={() => navigate('/AfficheAbonnementUser')}>
-            Mes Abonnements
+          <li className="menu-item" onClick={() => navigate('/eventuser')}>
+            Mes Evenements
+          </li><li className="menu-item" onClick={() => navigate('/evenementuser')}>
+          Evenements
           </li>
           {user ? (
             <>

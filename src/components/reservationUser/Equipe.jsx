@@ -9,6 +9,7 @@ const Equipe = () => {
   const navigate = useNavigate();
   const [reservations, setReservations] = useState([]);
   const [users, setUsers] = useState({});
+  const [c, setC] = useState(null);
   const [equipeData, setEquipeData] = useState({
     nom: '',
     type: '',
@@ -16,15 +17,20 @@ const Equipe = () => {
     reservation_id: null,
   });
   const [loading, setLoading] = useState(false);
-  const [showDemandeForm, setShowDemandeForm] = useState(false);
+  const [showDemandeForm, setShowDemandeForm] = useState(null);
+  const [showEquipeForm, setShowEquipeForm] = useState(false);
+  const [selectedReservationId, setSelectedReservationId] = useState(null);
   const [demandeData, setDemandeData] = useState({
     user_id: '',
     equipe_id: '',
     etat: '',
     date: '',
   });
+  const [selectedParticipant, setSelectedParticipant] = useState(null);
+  const [selectedEquipe, setSelectedEquipe] = useState(null);
+  const [demandes, setDemandes] = useState([]); // État pour stocker les demandes
 
-  // Charger les réservations
+  // Charger les réservations et les demandes
   useEffect(() => {
     const fetchReservations = async () => {
       try {
@@ -44,7 +50,21 @@ const Equipe = () => {
         toast.error('Erreur lors de la récupération des réservations.');
       }
     };
+
+    const fetchDemandes = async () => {
+      try {
+        const response = await axios.get('http://localhost:8000/api/demandes');
+        setDemandes(response.data.demandes); // Ensure we set the correct array
+      } catch (error) {
+        toast.error('Erreur lors de la récupération des demandes.');
+      }
+    };
+
     fetchReservations();
+    fetchDemandes();
+    const currentUser = JSON.parse(localStorage.getItem('user')).id;
+    setC(currentUser);
+    console.log(currentUser);
   }, []);
 
   // Gérer les changements dans les champs du formulaire
@@ -64,32 +84,39 @@ const Equipe = () => {
     setLoading(true);
 
     const reservationId = parseInt(e.target.elements['reservation_id'].value);
+    const reservation = reservations.find((r) => r.id === reservationId);
 
     try {
       // Étape 1 : Créer l'équipe
       const equipeResponse = await axios.post('http://localhost:8000/api/equipes', {
         ...equipeData,
+        type: reservation.Type, // Set team type to match reservation type
         reservation_id: reservationId,
       });
-      const newEquipeId = equipeResponse.data.equipe.id;
+      const newEquipeId = equipeResponse.data.equipe.id; // Correctly get the new team ID
+console.log(equipeResponse.data.equipe.id);
 
       // Étape 2 : Récupérer les participants actuels de la réservation
-      const reservation = reservations.find((r) => r.id === reservationId);
-
       let updatedParticipants = reservation.Participants || [];
       if (typeof updatedParticipants === 'string') {
         updatedParticipants = JSON.parse(updatedParticipants); // Si c'est une chaîne JSON
       }
 
       // Ajouter ou mettre à jour un participant
-      const currentUser = reservation.User_Reserve;
+      const currentUser = JSON.parse(localStorage.getItem('user')).id;
+      console.log(currentUser);
 
       if (!updatedParticipants.some((participant) => participant.user === currentUser)) {
         updatedParticipants.push({
           user: currentUser,
           equipe: newEquipeId,
         });
+      } else {
+        updatedParticipants = updatedParticipants.map((participant) =>
+          participant.user === currentUser ? { ...participant, equipe: newEquipeId } : participant
+        );
       }
+      console.log(updatedParticipants);
 
       // Étape 3 : Mettre à jour la réservation avec les nouveaux participants
       const response = await axios.put(`http://localhost:8000/api/reservation/${reservationId}`, {
@@ -116,7 +143,7 @@ const Equipe = () => {
         }
         return r;
       });
-      navigate(0)
+      navigate(0);
       setReservations(updatedReservations);
     } catch (error) {
       console.error(error);
@@ -127,21 +154,21 @@ const Equipe = () => {
   };
 
   // Soumettre le formulaire de demande
-  const handleDemandeSubmit = async (e) => {
-    e.preventDefault();
+  const handleDemandeSubmit = async (participant) => {
     setLoading(true);
 
     try {
-      const response = await axios.post('http://localhost:8000/api/demandes', demandeData);
-      console.log(response)
-      toast.success('Demande envoyée avec succès!');
-      setShowDemandeForm(false);
-      setDemandeData({
-        user_id: '',
-        equipe_id: '',
+      const demande = {
+        user_id: c,
+        equipe_id: participant.equipe,
         etat: '',
-        date: '',
-      });
+        date: new Date().toISOString().slice(0, 19).replace('T', ' '), // Format the date correctly
+      };
+      const response = await axios.post('http://localhost:8000/api/demandes', demande);
+      console.log(response);
+      toast.success('Demande envoyée avec succès!');
+      setShowDemandeForm(null);
+      setDemandes([...demandes, demande]); // Ajouter la nouvelle demande à l'état
     } catch (error) {
       console.error(error);
       toast.error("Erreur lors de l'envoi de la demande.");
@@ -151,15 +178,27 @@ const Equipe = () => {
   };
 
   // Fonction pour vérifier si le bouton "Ajouter Équipe" doit être affiché
-  const canAddEquipe = (participants, currentUser) => {
+  const canAddEquipe = (participants, currentUser, reservationId) => {
     if (typeof participants === 'string') {
       participants = JSON.parse(participants); // Si c'est une chaîne JSON
     }
 
     const totalEquipes = participants?.length || 0;
-    const userHasEquipe = participants?.some((p) => p.user === currentUser);
+    const userHasEquipe = participants?.some((p) => p.user === currentUser && p.equipe);
+    const hasSentRequest = demandes.some((demande) => demande.user_id === currentUser && demande.reservation_id === reservationId);
+console.log(hasSentRequest);
+    return totalEquipes < 2 && !userHasEquipe && !hasSentRequest;
+  };
 
-    return totalEquipes < 2 && !userHasEquipe;
+  // Fonction pour vérifier si le bouton "+" doit être affiché
+  const canJoinEquipe = (participants, currentUser, equipeId) => {
+    if (typeof participants === 'string') {
+      participants = JSON.parse(participants); // Si c'est une chaîne JSON
+    }
+
+    const hasSentRequest = demandes.some((demande) => demande.user_id === currentUser && demande.equipe_id === equipeId);
+
+    return !participants.some((p) => p.user === currentUser) && !hasSentRequest;
   };
 
   return (
@@ -174,9 +213,19 @@ const Equipe = () => {
             <p>Type: {reservation.Type}</p>
             <p>Date de réservation: {reservation.Date_Reservation}</p>
             <p>Date temps réel: {reservation.Date_TempsReel}</p>
-            <p>Participants: {JSON.stringify(reservation.Participants)}</p>
+            {/* <p>Participants: {JSON.stringify(reservation.Participants)}</p> */}
 
-            {canAddEquipe(reservation.Participants, reservation.User_Reserve) && (
+            {canAddEquipe(reservation.Participants, c, reservation.id) && (
+              <button onClick={() => {
+                setShowEquipeForm(true);
+                setSelectedReservationId(reservation.id);
+              }}>
+                Ajouter Équipe
+              </button>
+            )}
+            
+
+            {showEquipeForm && selectedReservationId === reservation.id && (
               <form onSubmit={handleSubmit}>
                 <input
                   type="text"
@@ -190,9 +239,10 @@ const Equipe = () => {
                   type="text"
                   name="type"
                   placeholder="Type"
-                  value={equipeData.type}
+                  value={reservation.Type}
                   onChange={handleChange}
                   required
+                  readOnly
                 />
                 <input
                   type="number"
@@ -213,44 +263,11 @@ const Equipe = () => {
               <div key={index} className="participant-card">
                 <p>Participant: {participant.user}</p>
                 <p>Équipe: {participant.equipe}</p>
-                <button onClick={() => {
-                  setShowDemandeForm(true);
-                  setDemandeData({ ...demandeData, equipe_id: participant.equipe });
-                }}>+</button>
+                {participant.user !== c && canJoinEquipe(reservation.Participants, c, participant.equipe) && (
+                  <button onClick={() => handleDemandeSubmit(participant)}>+</button>
+                )}
               </div>
             ))}
-
-            {showDemandeForm && (
-              <form onSubmit={handleDemandeSubmit}>
-                <input
-                  type="text"
-                  name="user_id"
-                  placeholder="ID Utilisateur"
-                  value={demandeData.user_id}
-                  onChange={handleDemandeChange}
-                  required
-                />
-                <input
-                  type="text"
-                  name="etat"
-                  placeholder="État"
-                  value={demandeData.etat}
-                  onChange={handleDemandeChange}
-                  required
-                />
-                <input
-                  type="datetime-local"
-                  name="date"
-                  placeholder="Date"
-                  value={demandeData.date}
-                  onChange={handleDemandeChange}
-                  required
-                />
-                <button type="submit" disabled={loading}>
-                  {loading ? 'Chargement...' : 'Envoyer Demande'}
-                </button>
-              </form>
-            )}
           </div>
         ))}
       </div>

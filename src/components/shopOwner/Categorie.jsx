@@ -67,10 +67,14 @@ const Category = ({ setShowCategory, setShowGererArticle, setSelectedCategoryId,
     const handleSave = async (e) => {
         e.preventDefault();
         try {
+            const updatedCategoryDetails = {
+                ...categoryDetails,
+                desc: `${categoryDetails.desc} (Shop ID: ${shopId})`,
+            };
             if (categoryDetails.id) {
-                await axios.put(`http://127.0.0.1:8000/api/categories/${categoryDetails.id}`, categoryDetails);
+                await axios.put(`http://127.0.0.1:8000/api/categories/${categoryDetails.id}`, updatedCategoryDetails);
             } else {
-                await axios.post('http://127.0.0.1:8000/api/categories', categoryDetails);
+                await axios.post('http://127.0.0.1:8000/api/categories', updatedCategoryDetails);
             }
             setShowModal(false);
             fetchCategories();
@@ -113,11 +117,11 @@ const Category = ({ setShowCategory, setShowGererArticle, setSelectedCategoryId,
         );
     }
 
-    // Filter categories based on articles that belong to the shop
+    // Filter categories based on articles that belong to the shop or have the shop ID in their description
     const filteredCategories = categories.filter(category =>
-        articles.some(article => article.shop_id === shopId && article.categorie_id === category.id)
+        articles.some(article => article.shop_id === shopId && article.categorie_id === category.id) ||
+        category.desc.includes(`(Shop ID: ${shopId})`)
     );
-
     return (
         <div className="category-container">
             <h2 className='recent-Articles' style={{marginLeft:"-600px"}}>Catégories</h2>
@@ -133,7 +137,7 @@ const Category = ({ setShowCategory, setShowGererArticle, setSelectedCategoryId,
                             </div>
                             <div className="card-body">
                                 <p className="card-text"><strong>Nom de categorie : </strong>{category.name}</p>
-                                <p className="card-text"><strong>Description : </strong>{category.desc}</p>
+                                <p className="card-text"><strong>Description : </strong>{category.desc.replace(` (Shop ID: ${shopId})`, '')}</p>
                                 <div className="d-flex justify-content-between">
                                     <Button className="bg-warning" onClick={() => handleEdit(category)}>
                                         <FaEdit /> Edit
