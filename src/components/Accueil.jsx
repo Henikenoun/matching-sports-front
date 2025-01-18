@@ -7,7 +7,7 @@ import './Accueil.css';
 import heroImage from '../assets/Sportissimo.jpg';
 // Import des images locales
 import footballImg from '../assets/football.jpg';
-import tennisImg from '../assets/tennis.jpg';
+import tennisImg from '../assets/Tennis.jpg';
 import gymImg from '../assets/gym1.jpg';
 
 const sportsList = [
