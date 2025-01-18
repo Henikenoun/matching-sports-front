@@ -1,0 +1,101 @@
+# Workflow pour construire, tester et déployer une application React
+name: React-Workflow
+
+# Déclencheurs du workflow
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build_test:
+    # Définir le type de runner
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x]
+
+    # Étapes de construction et de test
+    steps:
+      # Vérifie le dépôt
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      # Configure Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      # Installe les dépendances
+      - name: Install dependencies
+        run: npm install
+
+      # Lance les tests
+      - name: Run tests
+        run: npm test
+
+  push_to_docker_hub:
+    # Runner requis
+    runs-on: ubuntu-latest
+
+    # Nécessite la réussite des tests
+    needs: [build_test]
+
+    steps:
+      # Vérifie le dépôt
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      # Configure QEMU
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+
+      # Configure Docker Buildx
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      # Connecte à Docker Hub
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # Construit et pousse l'image Docker
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/reactsample:latest
+
+      # Teste l'exécution de l'image Docker
+      - name: Run the Docker image
+        uses: addnab/docker-run-action@v3
+        with:
+          image: ${{ secrets.DOCKERHUB_USERNAME }}/reactsample:latest
+          run: |
+            echo "Docker image is running successfully!"
+
+  push_to_vercel:
+    # Runner requis
+    runs-on: ubuntu-latest
+
+    # Déploiement sur Vercel
+    steps:
+      # Vérifie le dépôt
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      # Déploie sur Vercel
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v20
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.ORG_ID }}
+          vercel-project-id: ${{ secrets.PROJECT_ID }}
+          vercel-args: "--prod"
