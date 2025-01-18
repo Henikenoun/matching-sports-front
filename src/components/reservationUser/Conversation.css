@@ -1,0 +1,153 @@
+/* Conversation Page Styles */
+
+.conversation-page {
+  background-color: #f9f9f9;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header */
+.conversation-header {
+  text-align: center;
+  padding: 20px 0;
+  background-color: #2980b9;
+  color: white;
+  font-size: 1.5rem;
+  font-weight: bold;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Messages Container */
+.messages-container {
+  flex: 1;
+  padding: 20px;
+  margin: 0 auto;
+  max-width: 1000px;
+  background-color: #f4f4f4;
+  border-radius: 8px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Message Bubble */
+.message {
+  display: flex;
+  flex-direction: column;
+  max-width: 70%; /* Limit message width */
+  padding: 10px 15px;
+  margin: 10px 0;
+  border-radius: 15px;
+  font-size: 0.95rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.message.sent {
+  align-self: flex-end; /* Align user's messages to the right */
+  background-color: #2980b9;
+  color: white;
+  border-bottom-right-radius: 0; /* Add a slight tail effect */
+}
+
+.message.received {
+  align-self: flex-start; /* Align other users' messages to the left */
+  background-color: #ecf0f1;
+  color: #2c3e50;
+  border-bottom-left-radius: 0; /* Add a slight tail effect */
+}
+
+/* Message Info */
+.message-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: black; /* Message info text in black */
+  margin-top: 5px;
+}
+
+.message-author {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.message-content {
+  margin-bottom: 5px;
+}
+
+.message-timestamp {
+  font-size: 0.8rem;
+  color: #7f8c8d;
+  text-align: right;
+}
+
+/* Send Message Form */
+.send-message-form {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 20px;
+  border-top: 1px solid #ecf0f1;
+  background-color: #fff;
+}
+
+.message-input {
+  flex: 1;
+  padding: 15px; /* Increased padding */
+  border: 1px solid #ccc;
+  border-radius: 20px; /* Rounded input */
+  margin-right: 10px;
+  font-size: 1.1rem; /* Slightly larger text */
+  min-height: 50px; /* Taller input box */
+}
+
+.send-button {
+  background-color: #2980b9;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.2rem;
+  cursor: pointer;
+  height: 40px; /* Match icon height */
+  width: 40px; /* Match icon width */
+}
+
+.send-button:disabled {
+  background-color: #bdc3c7;
+  cursor: not-allowed;
+}
+
+/* Loading Overlay */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.spinner {
+  border: 5px solid #ccc;
+  border-top: 5px solid #2980b9;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

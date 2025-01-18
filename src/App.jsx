@@ -34,6 +34,7 @@ import AfficherShops from './components/SuperAdmin/AfficherShops';
 import OwnerDashboar from './components/Owner/OwnerDashboar';
 import AfficheEvenementUser from './components/UserInterface/AfficheEvenementUser';
 import Eventuser from './components/UserInterface/eventuser';
+import Conversation from './components/reservationUser/Conversation';
 
 
 
@@ -80,6 +81,7 @@ function App() {
             <Route path="/owner" element={<OwnerDashboar />} />
             <Route path="/evenementuser" element={<AfficheEvenementUser />} />
             <Route path="/eventuser" element={<Eventuser />} />
+            <Route path="/conversations/:conversationId" element={<Conversation />} />
             
 
           </Routes>

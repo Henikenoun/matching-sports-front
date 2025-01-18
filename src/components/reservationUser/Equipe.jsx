@@ -94,7 +94,7 @@ const Equipe = () => {
         reservation_id: reservationId,
       });
       const newEquipeId = equipeResponse.data.equipe.id; // Correctly get the new team ID
-console.log(equipeResponse.data.equipe.id);
+      console.log(equipeResponse.data.equipe.id);
 
       // Étape 2 : Récupérer les participants actuels de la réservation
       let updatedParticipants = reservation.Participants || [];
@@ -186,7 +186,7 @@ console.log(equipeResponse.data.equipe.id);
     const totalEquipes = participants?.length || 0;
     const userHasEquipe = participants?.some((p) => p.user === currentUser && p.equipe);
     const hasSentRequest = demandes.some((demande) => demande.user_id === currentUser && demande.reservation_id === reservationId);
-console.log(hasSentRequest);
+    console.log(hasSentRequest);
     return totalEquipes < 2 && !userHasEquipe && !hasSentRequest;
   };
 
@@ -200,6 +200,41 @@ console.log(hasSentRequest);
 
     return !participants.some((p) => p.user === currentUser) && !hasSentRequest;
   };
+
+  // Fonction pour vérifier ou créer une conversation et rediriger vers l'interface de conversation
+ const handleContactClick = async (reservationUserId) => {
+  try {
+    const token = localStorage.getItem('token'); // Get the token from local storage
+    const currentUser = JSON.parse(localStorage.getItem('user')).id; // Get the current user's ID from local storage
+
+    // Log the current user ID and reservation user ID
+    console.log('Current User ID:', currentUser);
+    console.log('Reservation User ID:', reservationUserId);
+
+    // Vérifier s'il existe déjà une conversation entre les deux utilisateurs
+    const response = await axios.get(`http://localhost:8000/api/conversations/by-user-ids?user_one_id=${currentUser}&user_two_id=${reservationUserId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`, // Include the Bearer token in the request headers
+      },
+    });
+
+    let conversationId;
+    if (response.data) {
+      console.log('Existing conversation ID:', response.data.id);
+      conversationId = response.data.id;
+    } else {
+      console.log('No existing conversation found.');
+    }
+
+    // Rediriger vers l'interface de conversation si une conversation existe
+    if (conversationId) {
+      navigate(`/conversations/${conversationId}`);
+    }
+  } catch (error) {
+    console.error('Erreur lors de la vérification de la conversation:', error.response?.data || error.message);
+    toast.error("Erreur lors de la vérification de la conversation.");
+  }
+};
 
   return (
     <div>
@@ -215,6 +250,8 @@ console.log(hasSentRequest);
             <p>Date temps réel: {reservation.Date_TempsReel}</p>
             {/* <p>Participants: {JSON.stringify(reservation.Participants)}</p> */}
 
+            <button onClick={() => handleContactClick(reservation.User_Reserve)}>Contacter</button>
+
             {canAddEquipe(reservation.Participants, c, reservation.id) && (
               <button onClick={() => {
                 setShowEquipeForm(true);
@@ -223,7 +260,6 @@ console.log(hasSentRequest);
                 Ajouter Équipe
               </button>
             )}
-            
 
             {showEquipeForm && selectedReservationId === reservation.id && (
               <form onSubmit={handleSubmit}>
