@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import AfficheClubs from './AfficheClubs';
 import AfficheAbonnements from '../Admin/AfficheAbonnements';
 import AjouterTerrain from '../Admin/AjouterTerrain';
-import logoImage from '../../assets/LogoL.png';
+import logoImage from '../../assets/LOGOL.png';
 // Composant fictif pour Reports
 import './SupAdDashoard.css';
 import AfficheUsers from './AfficheUsers';
