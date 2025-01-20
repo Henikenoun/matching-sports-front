@@ -8,7 +8,7 @@ import AfficheTerrain from './AfficheTerrain';
 import AfficheDemandeP from './AfficheDemandeP';
 import AfficheReservations from '../Admin/AfficheReservations';
 import Shop from '../shopOwner/Shop';
-import logoImage from '../../assets/LogoL.png';
+import logoImage from '../../assets/LOGOL.png';
 
 const OwnerDashboar = () => {
     // État pour gérer l'option active (Réservations, Abonnements, Settings, etc.)
