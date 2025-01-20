@@ -8,6 +8,7 @@ import AfficheTerrain from './AfficheTerrain';
 import AfficheDemandeP from './AfficheDemandeP';
 import AfficheReservations from '../Admin/AfficheReservations';
 import Shop from '../shopOwner/Shop';
+import logoImage from '../../assets/LogoL.png';
 
 const OwnerDashboar = () => {
     // État pour gérer l'option active (Réservations, Abonnements, Settings, etc.)
@@ -22,13 +23,8 @@ const OwnerDashboar = () => {
         <div className="admin-dashboard">
             {/* Header Section */}
             <header>
-                <div className="logosec">
-                    <div className="logo">SPORTISSIMO</div>
-                    <img
-                        src="https://media.geeksforgeeks.org/wp-content/uploads/20221210182541/Untitled-design-(30).png"
-                        className="icn menuicn"
-                        alt="menu-icon"
-                    />
+                <div className="logo" onClick={() => navigate('/')} style={{ marginTop: '15px' }}>
+                  <img src={logoImage} alt="Sportissimo Logo" style={{ width: '120px', height: 'auto' }} />
                 </div>
                 {/* Search bar */}
                 <div className="searchbar">

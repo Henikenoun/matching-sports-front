@@ -17,8 +17,8 @@ const AfficheEvenementUser = () => {
         try {
             const response = await axios.get('http://localhost:8000/api/evenements');
             const user = JSON.parse(localStorage.getItem('user'));
-            const userEvents = response.data.filter(event => event.participants.includes(user.id));
-            setEvenements(userEvents); // Stocke les événements de l'utilisateur authentifié
+            //const userEvents = response.data.filter(event => event.participants.includes(user.id));
+            setEvenements(response.data); // Stocke les événements de l'utilisateur authentifié
         } catch (error) {
             console.error('Erreur lors de la récupération des événements', error);
         }

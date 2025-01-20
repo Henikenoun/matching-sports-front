@@ -1,132 +1,163 @@
 import React from 'react';
 import { useShoppingCart } from 'use-shopping-cart';
-import { Link, useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import { Link } from 'react-router-dom';
 import './shop.css';
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements, useStripe } from '@stripe/react-stripe-js';
+import { toast } from 'react-toastify';
 import axios from 'axios';
-import Menu from '../Menu/Menu';
+
+const stripePromise = loadStripe('pk_test_51N8h05Ffd7KAMX0KwbMkfjvpRmG8ZivJvvc7vSvH3RH7b0gPuQ5xXhlYcC7FDtomxslc2oIS9JVcoPZ4jqUR2PuW00aENtCD5K');
 
 const Cart = () => {
-  const { cartDetails, removeItem, incrementItem, decrementItem, cartCount, totalPrice, clearCart } = useShoppingCart();
-  const navigate = useNavigate();
+  const { cartDetails, removeItem, clearCart, totalPrice, cartCount, incrementItem, decrementItem } = useShoppingCart();
+  const stripe = useStripe();
 
-  const handleCheckout = async () => {
+  const handleCheckout = async (event) => {
+    event.preventDefault();
+
+    if (!stripe) {
+      console.error('Stripe has not loaded yet');
+      return;
+    }
+
     try {
-      // Logique pour envoyer chaque article du panier
+      const items = Object.values(cartDetails).map((item) => ({
+        price_data: {
+          currency: 'usd',
+          product_data: {
+            name: item.name,
+            images: item.image ? [item.image] : [],
+          },
+          unit_amount: Math.round(item.price * 100), // Stripe expects the amount in cents
+        },
+        quantity: item.quantity,
+      }));
+
+      console.log('Sending to checkout:', items);
+
+      const payload = {
+        line_items: items,
+        success_url: `${window.location.origin}/demandes`,
+        cancel_url: `${window.location.origin}/cart`,
+      };
+
+      // Create demand (demande) for each item in the cart
       for (const item of Object.values(cartDetails)) {
-        const payload = {
+        const demandePayload = {
           id: item.id,
-          user_id: JSON.parse((localStorage.getItem('user'))).id, // Assurez-vous que user_id est correctement défini
+          user_id: JSON.parse(localStorage.getItem('user')).id, // Ensure user_id is correctly defined
           article_id: item.id,
           quantity: item.quantity,
-          total: item.price * item.quantity
-          
+          total: item.price * item.quantity,
         };
-        console.log((localStorage.getItem('user')))
-  
-        console.log("Payload envoyé :", payload); // Debugging : afficher la charge utile envoyée
-  
-        const response = await axios.post('http://localhost:8000/api/demandesP', payload);
-  
-        if (response.status === 200) {
+
+        console.log('Creating demande with payload:', demandePayload);
+
+        const demandeResponse = await axios.post('http://localhost:8000/api/demandesP', demandePayload);
+
+        if (demandeResponse.status === 200) {
+          clearCart(); // Clear the cart after successfully creating the demand
           toast.success('Article ajouté avec succès à la commande !');
         }
       }
-  
-      toast.success('Commande passée avec succès !');
-      clearCart();
-      navigate("/demandes")
-      
+
+      const response = await axios.post('http://localhost:8000/api/payment/processpayment', payload);
+
+      if (response.data.id) {
+        const result = await stripe.redirectToCheckout({
+          sessionId: response.data.id,
+        });
+
+        if (result.error) {
+          console.error('Stripe redirect error:', result.error);
+          throw new Error(result.error.message);
+        } 
+      } else {
+        throw new Error('No session ID received from server');
+      }
     } catch (error) {
-      console.error('Erreur lors de la création de la commande :', error.response?.data || error.message);
-      navigate("/demandes")
+      console.error('Checkout error:', error);
       toast.error('Erreur lors de la passation de la commande.');
     }
   };
-  
 
   return (
-    <div className="app">
-      <Menu />
-    <div className="container " style={{marginTop:'150px'}}>
-      <h2 className="text-center mb-4">Votre Panier</h2>
+    <div className="cart-container">
+      <h2>Shopping Cart</h2>
       {cartCount === 0 ? (
-        <div className="alert alert-warning text-center">Votre panier est vide.</div>
+        <div className="cart-empty">
+          <p>Panier Vide</p>
+          <div className="start-shopping">
+            <Link to="/articlescard">
+              <span>Start Shopping</span>
+            </Link>
+          </div>
+        </div>
       ) : (
-        <>
-          <div className="row">
-            {Object.values(cartDetails).map((item) => (
-              <div className="col-md-12 mb-3" key={item.id}>
-                <div className="card shadow-sm">
-                  <div className="row g-0">
-                    <div className="col-md-2">
-                      <img
-                        src={item.image}
-                        alt={item.name}
-                        className="img-fluid rounded-start"
-                      />
-                    </div>
-                    <div className="col-md-8">
-                      <div className="card-body">
-                        <h5 className="card-title">{item.name}</h5>
-                        <p className="card-text">Prix : {item.price} TND</p>
-                        <p className="card-text">Quantité : {item.quantity}</p>
-                      </div>
-                    </div>
-                    <div className="col-md-2 d-flex flex-column justify-content-center align-items-center">
-                      <button
-                        className="btn btn-outline-primary btn-sm mb-2"
-                        onClick={() => decrementItem(item.id)}
-                      >
-                        <span className="material-icons">remove</span>
-                      </button>
-                      <button
-                        className="btn btn-outline-primary btn-sm mb-2"
-                        onClick={() => incrementItem(item.id)}
-                      >
-                        <span className="material-icons">add</span>
-                      </button>
-                      <button
-                        className="btn btn-danger btn-sm"
-                        onClick={() => removeItem(item.id)}
-                      >
-                        <span className="material-icons">delete</span>
-                      </button>
-                    </div>
+        <div>
+          <div className="titles">
+            <h3 className="product-title">Product</h3>
+            <h3 className="price">Price</h3>
+            <h3 className="quantity">Quantity</h3>
+            <h3 className="total">Total</h3>
+          </div>
+          <div className="cart-items">
+            {cartDetails && Object.values(cartDetails).map((cartItem) => (
+              <div className="cart-item" key={cartItem.id}>
+                <div className="cart-product">
+                  <img src={`${cartItem.image}`} alt={cartItem.name} />
+                  <div>
+                    <h3>{cartItem.name}</h3>
+                    <button onClick={() => removeItem(cartItem.id)}>
+                      <i className="fa-solid fa-trash-can" style={{ fontSize: "14px", color: "red" }}></i>
+                    </button>
                   </div>
+                </div>
+                <div className="cart-product-price"> {cartItem.price} TND</div>
+                <div className="cart-product-quantity">
+                  <button className="button-actions" onClick={() => decrementItem(cartItem.id)}>
+                    -
+                  </button>
+                  <div className="count">{cartItem.quantity}</div>
+                  <button className="button-actions" onClick={() => incrementItem(cartItem.id)}>
+                    +
+                  </button>
+                </div>
+                <div className="cart-product-total-price">
+                  {cartItem.quantity * cartItem.price} TND
                 </div>
               </div>
             ))}
           </div>
-
-          <div className="text-center mt-4">
-            <h4>Total : {totalPrice.toFixed(2)} TND</h4>
-          </div>
-
-          <div className="d-flex justify-content-between mt-4">
-            <button
-              className="btn btn-danger w-50 me-2"
-              onClick={clearCart}
-            >
-              Vider le panier
+          <div className="cart-summary">
+            <button className="clear-btn" onClick={() => clearCart()}>
+              Clear Cart
             </button>
-            <button
-              className="btn btn-success w-50 ms-2"
-              onClick={handleCheckout}
-            >
-              Passer à la caisse
-            </button>
+            <div className="cart-checkout">
+              <div className="subtotal">
+                <span>Subtotal</span>
+                <span className="amount">{totalPrice} TND</span>
+              </div>
+              <p>Taxes and shipping calculated at checkout</p>
+              <button onClick={handleCheckout}>Check Out</button>
+              <div className="continue-shopping">
+                <Link to="/articlescard">
+                  <span>Continue Shopping</span>
+                </Link>
+              </div>
+            </div>
           </div>
-        </>
+        </div>
       )}
-      <div className="text-center mt-4">
-        <Link to="/shop" className="btn btn-link">
-          Continuer vos achats
-        </Link>
-      </div>
     </div>
-</div>
   );
 };
 
-export default Cart;
+const Wrapper = (props) => (
+  <Elements stripe={stripePromise}>
+    <Cart {...props} />
+  </Elements>
+);
+
+export default Wrapper;

@@ -35,6 +35,11 @@ import OwnerDashboar from './components/Owner/OwnerDashboar';
 import AfficheEvenementUser from './components/UserInterface/AfficheEvenementUser';
 import Eventuser from './components/UserInterface/eventuser';
 import Conversation from './components/reservationUser/Conversation';
+import MyConversations from './components/reservationUser/Myconversations';
+import Notification from './components/Notifications/Notification';
+import Reservations from './components/reservationUser/allReservatin';
+import DetailsReservations from './components/reservationUser/DetailsReservations';
+import NotificationPage from './components/Notifications/not';
 
 
 
@@ -49,7 +54,7 @@ function App() {
           <Routes>
             <Route path="/menu" element={<Menu />} />
             <Route path="/" element={<Accueil />} />
-            <Route path="/Admin" element={<AdminDashboard />} />
+            
             <Route path="/FormulaireAbonnement" element={<FormulaireAbonnement />} />
             <Route path="/ReservationUser" element={<ReservationUser />} />
             <Route path="/AffichageProfil" element={<AffichageProfil />} />
@@ -82,6 +87,12 @@ function App() {
             <Route path="/evenementuser" element={<AfficheEvenementUser />} />
             <Route path="/eventuser" element={<Eventuser />} />
             <Route path="/conversations/:conversationId" element={<Conversation />} />
+            <Route path="/my-conversations" element={<MyConversations />} />
+            <Route path="/notifications" element={<Notification />} />
+            <Route path="/notification" element={<NotificationPage />} />
+            <Route path="/reservations" element={<Reservations />} />
+            <Route path="/details/:id" element={<DetailsReservations />} />
+
             
 
           </Routes>

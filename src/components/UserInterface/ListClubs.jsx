@@ -20,6 +20,7 @@ const ListClubs = () => {
                 console.error('There was an error fetching the clubs!', error);
             });
     }, []);
+    
 
     const staticImage = 'https://img.freepik.com/free-photo/football-trainer-teaching-his-pupils_23-2149707985.jpg?ga=GA1.1.1024326678.1705530980';
 

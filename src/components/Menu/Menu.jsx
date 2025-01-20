@@ -3,11 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify'; // Assurez-vous que cette ligne est correcte
 import 'react-toastify/dist/ReactToastify.css'; // N'oubliez pas d'importer le CSS
 import './Menu.css';
-import logoImage from '../../assets/Logo.png'; // Chemin vers votre image
+import logoImage from '../../assets/L.png'; // Chemin vers votre image
 import { FaUserCircle } from 'react-icons/fa'; // Importation de l'icône utilisateur
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faShoppingCart } from '@fortawesome/free-solid-svg-icons';
+import { faShoppingCart, faEnvelope, faBell } from '@fortawesome/free-solid-svg-icons';
 import { useShoppingCart } from 'use-shopping-cart';
 
 const Menu = () => {
@@ -18,8 +18,6 @@ const Menu = () => {
 
   const handleLogout = () => {
     // Supprimer le token et les informations utilisateur du localStorage
-
-
     axios.post('http://localhost:8000/api/users/logout')
       .then(response => {
         console.log('Logout successful:', response.data);
@@ -47,8 +45,8 @@ const Menu = () => {
 
   return (
     <header className="menu-header">
-      <div className="logo" onClick={() => navigate('/')}>
-        <img src={logoImage} alt="Sportissimo Logo" />
+      <div className="logo" onClick={() => navigate('/')} style={{ marginTop: '15px' }}>
+        <img src={logoImage} alt="Sportissimo Logo" style={{ width: '120px', height: 'auto' }} />
       </div>
       <nav>
         <ul className="menu-links">
@@ -58,14 +56,18 @@ const Menu = () => {
           <li className="menu-item" onClick={() => navigate('/clubs')}>
             Clubs
           </li>
-          <li className="menu-item" onClick={() => navigate('/ReservationUser')}>
-            Mes Réservations
+
+          <li className="menu-item" onClick={() => navigate('/reservations')}>
+            Liste des Réservations
           </li>
-          <li className="menu-item" onClick={() => navigate('/eventuser')}>
-            Mes Evenements
-          </li><li className="menu-item" onClick={() => navigate('/evenementuser')}>
-          Evenements
+
+          <li className="menu-item" onClick={() => navigate('/evenementuser')}>
+            Evenements
           </li>
+          <li className="menu-item" onClick={() => navigate('/shop')}>
+            Shops 
+          </li>
+
           {user ? (
             <>
               <li className="menu-item" onClick={toggleDropdown}>
@@ -74,15 +76,26 @@ const Menu = () => {
                   <ul className="profile-dropdown">
                     <li onClick={() => navigate('/AffichageProfil')}>Profil</li>
                     <li onClick={handleLogout}>Se déconnecter</li>
+                    <li className="menu-item" onClick={() => navigate('/ReservationUser')}>
+                      Mes Réservations
+                    </li>
+                    <li className="menu-item" onClick={() => navigate('/notification')}>
+                      notif
+                    </li>
+                    <li className="menu-item" onClick={() => navigate('/eventuser')}>
+                      Mes Evenements
+                    </li>
+
                   </ul>
                 )}
+              </li>
+              <li className="menu-item" onClick={() => navigate('/my-conversations')}>
+                <FontAwesomeIcon icon={faEnvelope} />
               </li>
             </>
           ) : (
             <>
-              <li className="menu-item" onClick={() => navigate('/Register')}>
-                S'inscrire
-              </li>
+
               <li className="menu-item" onClick={() => navigate('/login')}>
                 Se connecter
               </li>
@@ -91,6 +104,9 @@ const Menu = () => {
           <li className="menu-item" onClick={() => navigate('/cart')}>
             <FontAwesomeIcon icon={faShoppingCart} />
             {cartCount > 0 && <span className="cart-count">{cartCount}</span>}
+          </li>
+          <li className="menu-item" onClick={() => navigate('/notifications')}>
+            <FontAwesomeIcon icon={faBell} />
           </li>
         </ul>
       </nav>

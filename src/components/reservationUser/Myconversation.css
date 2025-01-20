@@ -1,0 +1,45 @@
+.my-conversations-page {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  
+  .my-conversations-container {
+    flex: 1;
+    padding: 20px;
+    background-color: #f9f9f9;
+  }
+  
+  h2 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .conversations-list {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .conversation-item {
+    background-color: #fff;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .conversation-item:hover {
+    background-color: #f1f1f1;
+  }
+  
+  .conversation-item strong {
+    display: block;
+    margin-bottom: 5px;
+  }
+  
+  .conversation-item p {
+    margin: 0;
+    color: #555;
+  }

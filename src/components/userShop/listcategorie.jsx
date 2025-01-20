@@ -29,7 +29,7 @@ const ListCategorie = ({ shopId }) => {
 
   return (
     <div className="app">
-      {/* <Menu /> */}
+      
         <div className="categories-container" style={{marginTop:'100px'}}>
         {loading ? (
             <div className="spinner"></div>
@@ -38,7 +38,7 @@ const ListCategorie = ({ shopId }) => {
             <div className="categorie-card" key={categorie.id}>
                 <img src={categorie.photo} alt={categorie.name} />
                 <h3>{categorie.name}</h3>
-                <p>{categorie.desc}</p>
+                <p>{categorie.desc.slice(0, -12)}</p>
                 <button onClick={() => setSelectedCategorie(categorie.id)}>Voir articles</button>
             </div>
             ))

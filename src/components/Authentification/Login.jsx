@@ -95,6 +95,10 @@ const Login = () => {
             <button type="submit" className="login-btn" disabled={isLoading}>
               {isLoading ? 'Connexion en cours...' : 'Se connecter'}
             </button>
+            <a onClick={() => navigate('/Register')} className="register-link">
+              S'inscrire
+            </a>
+            
           </form>
         </div>
       </div>

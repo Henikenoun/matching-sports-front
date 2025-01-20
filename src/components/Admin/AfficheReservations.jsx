@@ -41,7 +41,14 @@ const AfficheReservations = () => {
             setLoading(false); // Arrêt du chargement
         }
     };
-
+const a = async (id)=>{
+    await axios.post(`http://127.0.0.1:8000/api/reservations/${id}/accept`)
+    navigate(0)
+}
+const r = async (id)=>{
+    await axios.post(`http://127.0.0.1:8000/api/reservations/${id}/refuse`)
+    navigate(0)
+}
     useEffect(() => {
         fetchReservations();
     }, []);
@@ -111,7 +118,10 @@ const AfficheReservations = () => {
                 <p>Frais de Location: {selectedReservation.terrain.fraisLocation}</p>
                 <p>Payé: {selectedReservation.ispaye ? <span className='text-success'>Oui</span> : <span className='text-danger'>Non</span>}</p>
                 <p><strong>Participants:</strong> {JSON.parse(selectedReservation.Participants).map(id => getName(id)).join(', ')}</p>
+                {/* <button onClick={() => a(selectedReservation.id)}>Accepter</button>
+                <button onClick={() => r(selectedReservation.id)}>Refuser </button> */}
                 <button onClick={() => setSelectedReservation(null)}>Retour</button>
+               
             </div>
         );
     }

@@ -32,7 +32,7 @@ const Articles = ({ categorieId }) => {
       quantity: 1,
     };
     addItem(product);
-    navigate('/cart');
+    //navigate('/cart');
     //navigate to cart
     
     toast.success('Article ajouté au panier !');
